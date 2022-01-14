@@ -1,0 +1,44 @@
+Inverter Simulation
+
+* need to change this path to your local PDK
+.include "/home/matt/work/asic-workshop/shuttle3-mpw-3/pdk/skywater-pdk/libraries/sky130_fd_pr/latest/models/corners/tt.spice"
+.include "/home/matt/work/asic-workshop/shuttle3-mpw-3/pdk/skywater-pdk/libraries/sky130_fd_sc_hd/latest/cells/dfxtp/sky130_fd_sc_hd__dfxtp_2.spice"
+
+* instantiate the flop
+Xflop CLK D VGND VGND VPWR VPWR Q sky130_fd_sc_hd__dfxtp_2
+
+* set gnd and power
+Vgnd VGND 0 0
+Vdd VPWR VGND 1.8
+Vreset RESET_B VGND 1.8
+
+* create clock & d pulses
+* initial, pulsed, delay, rise, fall, pulse w, period, phase
+Vclk CLK VGND pulse(0 1.8 1.5n 150p 150p 1n   3n )
+* this is the pulse, but it is modified below, so need to change that too
+Vd D VGND     pulse(0 1.0 0p   150p 150p 100p 10n)
+
+.control
+    set color0 = white
+    set color1 = black
+    set hcopypscolor = 0
+    set hcopywidth = 800
+    set hcopyheight = 800
+    set xbrushwidth = 2
+    let run = 0
+* most interesting part is at 1500, so bracket that
+    let delay = 1000p
+    dowhile delay < 1750p
+        echo run "$&run" "$&delay"
+        alter @Vd[pulse]=[ 0 1.8 $&delay 150p 150p 100p 10n ]
+        tran 10e-12 4e-09 0e-00
+        if run > 0
+            hardcopy pss/$&run Q D CLK ylimit -0.5 2.5
+        end
+        let delay = delay + 1p
+        let run = run + 1
+    end
+    quit
+.endc
+
+.end
