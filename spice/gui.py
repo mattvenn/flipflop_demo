@@ -12,6 +12,7 @@ COLOURS = [
     (255,   0,   0),
     (  0, 255,   0),
     (  0,   0, 255),
+    (100,   0, 255),
     ] 
 
 class Window(QWidget):
@@ -37,7 +38,7 @@ class Window(QWidget):
             try:
                 with open('csv/%d' % fileNumber) as f:
                     reader = csv.DictReader(f, delimiter=' ', skipinitialspace=True)
-                    self.nodeNames = reader.fieldnames[0:-1]
+                    self.nodeNames = reader.fieldnames
 
                     self.data.append({})
                     for nodeName in self.nodeNames:
