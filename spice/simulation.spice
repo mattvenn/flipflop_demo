@@ -25,6 +25,9 @@ Vd D VGND     pulse(0 1.0 0p   150p 150p 100p 10n)
     set hcopywidth = 800
     set hcopyheight = 800
     set xbrushwidth = 2
+    set wr_vecnames
+    set wr_singlescale
+    option numdgt=7
     let run = 0
 * most interesting part is at 1500, so bracket that
     let delay = 1000p
@@ -33,9 +36,10 @@ Vd D VGND     pulse(0 1.0 0p   150p 150p 100p 10n)
         alter @Vd[pulse]=[ 0 1.8 $&delay 150p 150p 100p 10n ]
         tran 10e-12 4e-09 0e-00
         if run > 0
-            hardcopy pss/$&run Q D CLK ylimit -0.5 2.5
+*            hardcopy pss/$&run Q D CLK ylimit -0.5 2.5
+            wrdata csv/$&run Q D CLK
         end
-        let delay = delay + 1p
+        let delay = delay + 10p
         let run = run + 1
     end
     quit

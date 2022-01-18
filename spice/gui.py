@@ -7,6 +7,13 @@ from PyQt5.QtWidgets import (QApplication, QCheckBox, QGridLayout, QGroupBox,
 from pyqtgraph import PlotWidget, plot
 import pyqtgraph as pg
 
+COLOURS = [
+    (255, 255,   0),
+    (255,   0,   0),
+    (  0, 255,   0),
+    (  0,   0, 255),
+    ] 
+
 class Window(QWidget):
     def __init__(self, parent=None):
         super(Window, self).__init__(parent)
@@ -18,64 +25,74 @@ class Window(QWidget):
         grid.addWidget(self.createControls(), 1, 0)
         self.setLayout(grid)
 
+        self.updateGraph(0)
+
         self.setWindowTitle("Wave display")
         self.resize(1800, 800)
 
     def loadData(self):
-        filenumber = 1 
+        fileNumber = 1 
         self.data = []
         while True:
             try:
-                with open('csv/%d' % filenumber) as f:
-                    self.data.append( [d[0:-1] for d in csv.reader(f, delimiter=' ', skipinitialspace=True)] )
-                filenumber += 1
+                with open('csv/%d' % fileNumber) as f:
+                    reader = csv.DictReader(f, delimiter=' ', skipinitialspace=True)
+                    self.nodeNames = reader.fieldnames[0:-1]
+
+                    self.data.append({})
+                    for nodeName in self.nodeNames:
+                        self.data[fileNumber-1][nodeName] = []
+
+                    for row in reader:
+                        for nodeName in self.nodeNames:
+                            self.data[fileNumber-1][nodeName].append(float(row[nodeName]))
+
+                fileNumber += 1
             except FileNotFoundError as e:
                 break
-        print("loaded %d records" % filenumber)
-        print("CSV header: %s" % self.data[0][0])
-        print("time points in record: %d" % len(self.data[0]))
+            if fileNumber > 100:
+                break
 
-        self.dataLabels = self.data[0][0][1:]
-        self.numFiles = len(self.data)
+        self.numFiles = fileNumber - 1
+        print("Loaded %d records" % fileNumber)
+        print("Nodenames: %s" % self.nodeNames)
 
     # setup the graph widgets - no data yet
     def createGraph(self):
         graphWidget = pg.PlotWidget()
+        self.graphs = {}
         width = 2
-        pen = pg.mkPen(color=(255, 0, 0), width=width)
-        self.data1 = graphWidget.plot(pen=pen)
-        pen = pg.mkPen(color=(0, 255, 0), width=width)
-        self.data2 = graphWidget.plot(pen=pen)
-        pen = pg.mkPen(color=(0, 0, 255), width=width)
-        self.data3 = graphWidget.plot(pen=pen)
+        colourNum = 0
+        for nodeName in self.nodeNames:
+            pen = pg.mkPen(color=COLOURS[colourNum], width=width)
+            self.graphs[nodeName] = graphWidget.plot(pen=pen)
+            colourNum += 1
 
         graphWidget.setYRange(0, 2, padding=0)
         return graphWidget
 
     # when slider is moved, update data
-    def updateGraph(self, filenumber):
-        a = []
-        b = []
-        c = []
-        x = []
-        for row in self.data[filenumber][1:]:
-            x.append(float(row[0]))
-            a.append(float(row[1]))
-            b.append(float(row[2]))
-            c.append(float(row[3]))
-
-        self.data1.setData(x, a)
-        self.data2.setData(x, b)
-        self.data3.setData(x, c)
+    def updateGraph(self, fileNumber):
+        # for each node read, update its graph
+        for nodeName in self.nodeNames:
+            if nodeName == 'time':
+                continue
+            if self.showControls[nodeName].isChecked():
+                self.graphs[nodeName].setData(self.data[fileNumber]['time'], self.data[fileNumber][nodeName])
+            else:
+                self.graphs[nodeName].clear()
         
     def createControls(self):
         groupBox = QGroupBox("Controls")
         vbox = QVBoxLayout()
-
-        for label in self.dataLabels:
-            box1 = QCheckBox(label)
-            box1.setChecked(True)
-            vbox.addWidget(box1)
+        self.showControls = {}
+        for nodeName in self.nodeNames:
+            if nodeName == 'time':
+                continue
+            box = QCheckBox(nodeName)
+            box.setChecked(True)
+            self.showControls[nodeName] = box
+            vbox.addWidget(box)
 
         slider = QSlider(Qt.Horizontal)
         slider.setFocusPolicy(Qt.StrongFocus)
