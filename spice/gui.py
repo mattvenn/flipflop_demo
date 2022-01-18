@@ -7,14 +7,29 @@ from PyQt5.QtWidgets import (QApplication, QCheckBox, QGridLayout, QGroupBox,
 from pyqtgraph import PlotWidget, plot
 import pyqtgraph as pg
 
+ALIASES = {
+    'Xflop.a_27_47#'    : 'CLK_INV',
+    'Xflop.a_193_47#'   : 'CLK_INV_INV',
+    'Xflop.a_381_47#'   : 'D_INV',
+    'Xflop.a_466_413#'  : 'X2_IN',
+    'Xflop.a_634_159#'  : 'X2_OUT',
+    }
+
+# https://colorswall.com/palette/73/
 COLOURS = [
-    (255, 255,   0),
-    (255,   0,   0),
-    (  0, 255,   0),
-    (  0,   0, 255),
-    (100, 100, 255),
-    ( 50, 100,  55),
+    (0xff,0xf1,0x00),
+    (0xff,0x8c,0x00),
+    (0xe8,0x11,0x23),
+    (0xec,0x00,0x8c),
+    (0x68,0x21,0x7a),
+    (0x00,0x18,0x8f),
+    (0x00,0xbc,0xf2),
+    (0x00,0xb2,0x94),
+    (0x00,0x9e,0x49),
+    (0xba,0xd8,0x0a),
     ] 
+
+PEN_WIDTH = 3
 
 class Window(QWidget):
     def __init__(self, parent=None):
@@ -62,14 +77,11 @@ class Window(QWidget):
     def createGraph(self):
         graphWidget = pg.PlotWidget()
         self.graphs = {}
-        width = 2
-        colourNum = 0
-        for nodeName in self.nodeNames:
-            pen = pg.mkPen(color=COLOURS[colourNum], width=width)
+        for num, nodeName in enumerate(self.nodeNames):
+            pen = pg.mkPen(color=COLOURS[num], width=PEN_WIDTH)
             self.graphs[nodeName] = graphWidget.plot(pen=pen)
-            colourNum += 1
 
-        graphWidget.setYRange(0, 2, padding=0)
+        graphWidget.setYRange(0, 1.8, padding=0.2)
         return graphWidget
 
     def updateFile(self, number):
@@ -94,7 +106,12 @@ class Window(QWidget):
         for num, nodeName in enumerate(self.nodeNames):
             if nodeName == 'time':
                 continue
-            box = QCheckBox(nodeName)
+
+            if nodeName in ALIASES:
+                box = QCheckBox(ALIASES[nodeName])
+            else:
+                box = QCheckBox(nodeName)
+
             box.setChecked(True)
             box.stateChanged.connect(self.updateGraph)
             box.setStyleSheet("background:rgb(%d,%d,%d);" % (COLOURS[num][0], COLOURS[num][1], COLOURS[num][2]))

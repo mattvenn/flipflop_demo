@@ -40,9 +40,9 @@ Vd D VGND     pulse(0 1.0 0p   150p 150p 100p 10n)
         tran 10e-12 4e-09 0e-00
         if run > 0
 *            hardcopy pss/$&run Q D CLK ylimit -0.5 2.5
-            wrdata csv/$&run Q D CLK Xflop.a_27_47# Xflop.a_381_47#
+            wrdata csv/$&run Q D CLK Xflop.a_27_47# Xflop.a_193_47# Xflop.a_381_47# Xflop.a_466_413# Xflop.a_634_159#
         end
-        let delay = delay + 10p
+        let delay = delay + 0.5p
         let run = run + 1
     end
     quit
