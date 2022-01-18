@@ -1,5 +1,5 @@
 setup:
-	mkdir pngs pss
+	mkdir pngs pss csv
 
 sim: simulation.spice
 	# run the simulation
