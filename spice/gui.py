@@ -12,7 +12,8 @@ COLOURS = [
     (255,   0,   0),
     (  0, 255,   0),
     (  0,   0, 255),
-    (100,   0, 255),
+    (100, 100, 255),
+    ( 50, 100,  55),
     ] 
 
 class Window(QWidget):
@@ -26,37 +27,36 @@ class Window(QWidget):
         grid.addWidget(self.createControls(), 1, 0)
         self.setLayout(grid)
 
-        self.updateGraph(0)
+        self.updateGraph()
 
         self.setWindowTitle("Wave display")
         self.resize(1800, 800)
 
     def loadData(self):
-        fileNumber = 1 
+        self.fileNumber = 1 
         self.data = []
         while True:
             try:
-                with open('csv/%d' % fileNumber) as f:
+                with open('csv/%d' % self.fileNumber) as f:
                     reader = csv.DictReader(f, delimiter=' ', skipinitialspace=True)
                     self.nodeNames = reader.fieldnames
 
                     self.data.append({})
                     for nodeName in self.nodeNames:
-                        self.data[fileNumber-1][nodeName] = []
+                        self.data[self.fileNumber-1][nodeName] = []
 
                     for row in reader:
                         for nodeName in self.nodeNames:
-                            self.data[fileNumber-1][nodeName].append(float(row[nodeName]))
+                            self.data[self.fileNumber-1][nodeName].append(float(row[nodeName]))
 
-                fileNumber += 1
+                self.fileNumber += 1
             except FileNotFoundError as e:
                 break
-            if fileNumber > 100:
-                break
 
-        self.numFiles = fileNumber - 1
-        print("Loaded %d records" % fileNumber)
+        self.numFiles = self.fileNumber - 1
+        print("Loaded %d records" % self.fileNumber)
         print("Nodenames: %s" % self.nodeNames)
+        self.fileNumber = 0
 
     # setup the graph widgets - no data yet
     def createGraph(self):
@@ -72,14 +72,18 @@ class Window(QWidget):
         graphWidget.setYRange(0, 2, padding=0)
         return graphWidget
 
+    def updateFile(self, number):
+        self.fileNumber = number
+        self.updateGraph()
+
     # when slider is moved, update data
-    def updateGraph(self, fileNumber):
+    def updateGraph(self):
         # for each node read, update its graph
         for nodeName in self.nodeNames:
             if nodeName == 'time':
                 continue
             if self.showControls[nodeName].isChecked():
-                self.graphs[nodeName].setData(self.data[fileNumber]['time'], self.data[fileNumber][nodeName])
+                self.graphs[nodeName].setData(self.data[self.fileNumber]['time'], self.data[self.fileNumber][nodeName])
             else:
                 self.graphs[nodeName].clear()
         
@@ -87,21 +91,23 @@ class Window(QWidget):
         groupBox = QGroupBox("Controls")
         vbox = QVBoxLayout()
         self.showControls = {}
-        for nodeName in self.nodeNames:
+        for num, nodeName in enumerate(self.nodeNames):
             if nodeName == 'time':
                 continue
             box = QCheckBox(nodeName)
             box.setChecked(True)
+            box.stateChanged.connect(self.updateGraph)
+            box.setStyleSheet("background:rgb(%d,%d,%d);" % (COLOURS[num][0], COLOURS[num][1], COLOURS[num][2]))
             self.showControls[nodeName] = box
             vbox.addWidget(box)
-
+       
         slider = QSlider(Qt.Horizontal)
         slider.setFocusPolicy(Qt.StrongFocus)
         slider.setTickPosition(QSlider.TicksBothSides)
         slider.setTickInterval(10)
         slider.setMaximum(self.numFiles - 1)
         slider.setSingleStep(1)
-        slider.valueChanged.connect(self.updateGraph)
+        slider.valueChanged.connect(self.updateFile)
         vbox.addWidget(slider)
 
         vbox.addStretch(1)
