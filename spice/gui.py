@@ -27,6 +27,7 @@ COLOURS = [
     (0x00,0xb2,0x94),
     (0x00,0x9e,0x49),
     (0xba,0xd8,0x0a),
+    (0xff,0xf1,0x00),
     ] 
 
 PEN_WIDTH = 3
@@ -55,6 +56,9 @@ class Window(QWidget):
                 with open('csv/%d' % self.fileNumber) as f:
                     reader = csv.DictReader(f, delimiter=' ', skipinitialspace=True)
                     self.nodeNames = reader.fieldnames
+                    # sometimes it reads an extra empty fieldname
+                    if '' in self.nodeNames:
+                        self.nodeNames.remove('')
 
                     self.data.append({})
                     for nodeName in self.nodeNames:
