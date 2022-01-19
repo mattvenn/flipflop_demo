@@ -49,6 +49,7 @@ class Window(QWidget):
         self.resize(1800, 800)
 
     def loadData(self):
+        print("loading data...")
         self.fileNumber = 1 
         self.data = []
         while True:
@@ -86,6 +87,7 @@ class Window(QWidget):
             self.graphs[nodeName] = graphWidget.plot(pen=pen)
 
         graphWidget.setYRange(0, 1.8, padding=0.2)
+        graphWidget.showGrid(x = True, y = True, alpha = 0.7) 
         return graphWidget
 
     def updateFile(self, number):

@@ -11,13 +11,12 @@ Xflop CLK D VGND VGND VPWR VPWR Q sky130_fd_sc_hd__dfxtp_2
 * set gnd and power
 Vgnd VGND 0 0
 Vdd VPWR VGND 1.8
-Vreset RESET_B VGND 1.8
 
 * create clock & d pulses
 * initial, pulsed, delay, rise, fall, pulse w, period, phase
 Vclk CLK VGND pulse(0 1.8 1.5n 150p 150p 1n   3n )
 * this is the pulse, but it is modified below, so need to change that too
-Vd D VGND     pulse(0 1.0 0p   150p 150p 100p 10n)
+Vd D VGND     pulse(0 1.0 0p   150p 150p 1n   10n)
 
 
 
@@ -33,13 +32,12 @@ Vd D VGND     pulse(0 1.0 0p   150p 150p 100p 10n)
     option numdgt=7
     let run = 0
 * most interesting part is at 1500, so bracket that
-    let delay = 1000p
-    dowhile delay < 1750p
+    let delay = 1300p
+    dowhile delay < 1600p
         echo run "$&run" "$&delay"
-        alter @Vd[pulse]=[ 0 1.8 $&delay 150p 150p 100p 10n ]
+        alter @Vd[pulse]=[ 0 1.8 $&delay 150p 150p 1n 10n ]
         tran 10e-12 4e-09 0e-00
         if run > 0
-*            hardcopy pss/$&run Q D CLK ylimit -0.5 2.5
             wrdata csv/$&run Q D CLK Xflop.a_27_47# Xflop.a_193_47# Xflop.a_381_47# Xflop.a_466_413# Xflop.a_634_159#
         end
         let delay = delay + 0.5p

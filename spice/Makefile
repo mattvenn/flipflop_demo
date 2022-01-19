@@ -1,7 +1,11 @@
 setup:
-	mkdir pngs pss csv
+	mkdir csv
+
+feedback: feedback_demo.spice
+	ngspice $^
 
 sim: simulation.spice
+	rm csv/*
 	# run the simulation
 	ngspice $^
 
