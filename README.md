@@ -16,10 +16,13 @@ After install of openlane/pdk etc, copy this directory to $OPENLANE_ROOT/designs
 
 This will simulate moving a data pulse through the setup and hold times of a d type flop.
 
+    cd spice
+    make setup
     make sim
 
 ## Use the GUI
 
+    cd spice
     ./gui.py
     
-You will need to install the [requirements](requirements.txt)
+You will need to install the [requirements](spice/requirements.txt)
