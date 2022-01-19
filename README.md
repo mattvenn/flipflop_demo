@@ -16,5 +16,10 @@ After install of openlane/pdk etc, copy this directory to $OPENLANE_ROOT/designs
 
 This will simulate moving a data pulse through the setup and hold times of a d type flop.
 
-It then generates 500 pngs which can then be concatenated into an animated gif.
+    make sim
 
+## Use the GUI
+
+    ./gui.py
+    
+You will need to install the [requirements](requirements.txt)
