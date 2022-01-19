@@ -1,0 +1,35 @@
+* How hard do coupled inverters push to recovery, in SkyWater130 HD, TT 27C
+
+.include "/home/matt/work/asic-workshop/shuttle3-mpw-3/pdk/sky130A/libs.ref/sky130_fd_sc_hd/spice/sky130_fd_sc_hd.spice"
+.include "/home/matt/work/asic-workshop/shuttle3-mpw-3/pdk/skywater-pdk/libraries/sky130_fd_pr/latest/models/corners/tt.spice"
+
+.param vp=1.8
+
+Vdd vdd 0 DC 'vp'
+
+* Vfrc forces node 1 to a voltage.  X2 will push/pull on Vfrc to try to move the inverter pair
+* into a stable state.  Node 1 voltages where X2 tries hard are stable. And it gives an idea 
+* what the restoring force looks like at that point.  Voltages where X2 pushes not at all, i.e. 
+* X2 output current is zero, are metastable. 
+
+Vfrc 1 gnd DC 'vp' 
+
+X1 1 gnd gnd vdd vdd 2 sky130_fd_sc_hd__inv_4
+X2 2 gnd gnd vdd vdd 1 sky130_fd_sc_hd__inv_4
+
+.dc Vfrc 0 'vp' 1m
+
+.control
+set noaskquit
+set filetype=ascii
+set noacct
+options NOINIT NOMOD
+save 2 i(Vfrc)
+run
+plot i(Vfrc) 
+plot v(2)
+write
+*quit
+.endc
+
+.end
