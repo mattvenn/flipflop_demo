@@ -1,12 +1,15 @@
 Inverter Simulation
 
 * need to change this path to your local PDK
+.include "/home/matt/work/asic-workshop/shuttle3-mpw-3/pdk/sky130A/libs.ref/sky130_fd_sc_hd/spice/sky130_fd_sc_hd.spice"
 .include "/home/matt/work/asic-workshop/shuttle3-mpw-3/pdk/skywater-pdk/libraries/sky130_fd_pr/latest/models/corners/tt.spice"
-.include "sky130_fd_sc_hd__dfxtp_2.spice"
-*.include "/home/matt/work/asic-workshop/shuttle3-mpw-3/pdk/skywater-pdk/libraries/sky130_fd_sc_hd/latest/cells/dfxtp/sky130_fd_sc_hd__dfxtp_2.spice"
+
+* buffer the inputs to the clock to make them more realistic
+Xdbuf      CLK VGND VGND VPWR VPWR CLK_BUF sky130_fd_sc_hd__buf_1
+Xclkbuf    D   VGND VGND VPWR VPWR D_BUF   sky130_fd_sc_hd__buf_1
 
 * instantiate the flop
-Xflop CLK D VGND VGND VPWR VPWR Q sky130_fd_sc_hd__dfxtp_2
+Xflop      CLK_BUF D_BUF VGND VGND VPWR VPWR Q sky130_fd_sc_hd__dfxtp_2
 
 * set gnd and power
 Vgnd VGND 0 0
@@ -38,7 +41,7 @@ Vd D VGND     pulse(0 1.0 0p   150p 150p 1n   10n)
         alter @Vd[pulse]=[ 0 1.8 $&delay 150p 150p 1n 10n ]
         tran 10e-12 4e-09 0e-00
         if run > 0
-            wrdata csv/$&run Q D CLK Xflop.a_27_47# Xflop.a_193_47# Xflop.a_381_47# Xflop.a_466_413# Xflop.a_634_159#
+            wrdata csv/$&run Q D_BUF CLK_BUF Xflop.a_27_47# Xflop.a_193_47# Xflop.a_381_47# Xflop.a_466_413# Xflop.a_634_159#
         end
         let delay = delay + 0.5p
         let run = run + 1

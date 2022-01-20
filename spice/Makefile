@@ -5,7 +5,7 @@ feedback: feedback_demo.spice
 	ngspice $^
 
 sim: simulation.spice
-	rm csv/*
+	rm -f csv/*
 	# run the simulation
 	ngspice $^
 
