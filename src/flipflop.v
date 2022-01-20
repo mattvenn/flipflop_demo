@@ -1,11 +1,11 @@
 `default_nettype none
 module flipflop_demo(
     input wire  clk,
-    input wire  data_in,
-    output reg  data_out
+    input wire  d,
+    output reg  q
     );
 
     always @(posedge clk) 
-            data_out <= data_in;
+            q <= d;
 
 endmodule
