@@ -42,18 +42,18 @@ class Window(QWidget):
         grid = QGridLayout()
         grid.addWidget(self.createGraph(), 0, 0)
         grid.addWidget(self.createControls(), 1, 0)
-        self.setLayout(grid)
 
         self.updateGraph()
 
         self.label = QLabel(self)
                  
         # loading image
-        self.pixmap = QPixmap('../schematic/tgff.png')
+        self.pixmap = QPixmap('../schematic/tgff_full.png')
         self.label.setPixmap(self.pixmap)
         grid.addWidget(self.label, 2, 0)
 
         self.setWindowTitle("Wave display")
+        self.setLayout(grid)
         self.resize(1800, 800)
 
     def loadData(self):
