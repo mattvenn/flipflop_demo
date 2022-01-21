@@ -2,8 +2,9 @@
 import sys
 import csv
 from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import (QApplication, QCheckBox, QGridLayout, QGroupBox,
-                             QMenu, QPushButton, QRadioButton, QVBoxLayout, QWidget, QSlider)
+from PyQt5.QtWidgets import *
+from PyQt5.QtGui import QPixmap
+
 from pyqtgraph import PlotWidget, plot
 import pyqtgraph as pg
 
@@ -17,15 +18,15 @@ ALIASES = {
 
 # https://colorswall.com/palette/73/
 COLOURS = [
-    (0xff,0xf1,0x00),
-    (0xff,0x8c,0x00),
-    (0xe8,0x11,0x23),
-    (0xec,0x00,0x8c),
-    (0x68,0x21,0x7a),
-    (0x00,0x18,0x8f),
-    (0x00,0xbc,0xf2),
-    (0x00,0xb2,0x94),
-    (0x00,0x9e,0x49),
+    (0xff,0xf1,0x00), 
+    (0xff,0x8c,0x00), # Q
+    (0xe8,0x11,0x23), # D
+    (0xec,0x00,0x8c), # clk
+    (0x68,0x21,0x7a), # clk in
+    (0x00,0x18,0x8f), # clk inv inv
+    (0x00,0xbc,0xf2), # d inv
+    (0x00,0xb2,0x94), # x2 in
+    (0x00,0x9e,0x49), # x2 out
     (0xba,0xd8,0x0a),
     (0xff,0xf1,0x00),
     ] 
@@ -44,6 +45,13 @@ class Window(QWidget):
         self.setLayout(grid)
 
         self.updateGraph()
+
+        self.label = QLabel(self)
+                 
+        # loading image
+        self.pixmap = QPixmap('../schematic/tgff.png')
+        self.label.setPixmap(self.pixmap)
+        grid.addWidget(self.label, 2, 0)
 
         self.setWindowTitle("Wave display")
         self.resize(1800, 800)
