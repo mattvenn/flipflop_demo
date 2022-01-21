@@ -39,7 +39,7 @@ Vd D VGND     pulse(0 1.0 0p   150p 150p 1n   10n)
     dowhile delay < 1600p
         echo run "$&run" "$&delay"
         alter @Vd[pulse]=[ 0 1.8 $&delay 150p 150p 1n 10n ]
-        tran 5e-12 4e-09 0e-00
+        tran 50e-12 4e-09 0e-00
         if run > 0
             wrdata csv/$&run Q D_BUF CLK_BUF Xflop.a_27_47# Xflop.a_193_47# Xflop.a_381_47# Xflop.a_466_413# Xflop.a_634_159#
         end
