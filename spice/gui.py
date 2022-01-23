@@ -51,7 +51,7 @@ class Window(QWidget):
         grid.addWidget(self.measure_label, 2, 0)
                  
         # loading image
-        self.pixmap = QPixmap('../schematic/tgff_full.png')
+        self.pixmap = QPixmap('../schematic/tgff_with_clock.png')
         self.schem_label.setPixmap(self.pixmap)
         grid.addWidget(self.schem_label, 3, 0)
 
