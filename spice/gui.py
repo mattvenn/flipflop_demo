@@ -60,7 +60,7 @@ class Window(QWidget):
         self.resize(1800, 800)
 
     def loadData(self):
-        print("loading data...")
+        print("loading data", end='')
         self.fileNumber = 1 
         self.data = []
         while True:
@@ -81,10 +81,14 @@ class Window(QWidget):
                             self.data[self.fileNumber-1][nodeName].append(float(row[nodeName]))
 
                 self.fileNumber += 1
+                if self.fileNumber % 10 == 0:
+                    print(".", end='', flush=True)
             except FileNotFoundError as e:
                 break
 
+
         self.numFiles = self.fileNumber - 1
+        print("")
         print("Loaded %d records" % self.fileNumber)
         print("Nodenames: %s" % self.nodeNames)
         self.fileNumber = 0
