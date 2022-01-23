@@ -1,10 +1,24 @@
-# Flipflop demo
+# Interactive flip flop simulation
 
-https://docs.google.com/document/d/1EKELzHmQ0uu2yd_Y5IZuVqJGCVpMIpfF3u9pVEk68pQ/edit#
+For a video coming soon to https://www.youtube.com/zerotoasic
 
-Support files for a video by https://ZeroToASICcourse.com
+![schematic](schematic/tgff_with_clock.png)
 
-## Build GDS
+![screenshot](screenshot.png)
+
+![gds](gds.png)
+
+## To play with bundled data set from SKY130 df transmission gate flip flop
+
+    cd spice
+    tar xf csv.tar.bz2
+    ./gui.py
+
+You will probably need to install the [requirements](spice/requirements.txt)
+
+    pip3 install -r spice/requirements.txt
+
+## If you want to build the GDS of the design
 
 After install of openlane/pdk etc, copy this directory to $OPENLANE_ROOT/designs. Then:
 
@@ -12,7 +26,7 @@ After install of openlane/pdk etc, copy this directory to $OPENLANE_ROOT/designs
     make mount
     ./flow.tcl -design flipflop_demo
 
-## Run the spice simulation
+## Create the dataset yourself
 
 This will simulate moving a data pulse through the setup and hold times of a d type flop.
 
@@ -20,9 +34,11 @@ This will simulate moving a data pulse through the setup and hold times of a d t
     make setup
     make sim
 
-## Use the GUI
+Takes about 8 mins on my laptop.
 
-    cd spice
-    ./gui.py
-    
-You will need to install the [requirements](spice/requirements.txt)
+## Fun facts
+
+* 26 fets, 13 CMOS pairs
+* 7 inverters
+* 2 tristate inverters
+* 2 transmission gates
