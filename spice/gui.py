@@ -45,12 +45,15 @@ class Window(QWidget):
 
         self.updateGraph()
 
-        self.label = QLabel(self)
+        self.schem_label = QLabel(self)
+        self.measure_label = QLabel(self)
+        self.measure_label.setText("0")
+        grid.addWidget(self.measure_label, 2, 0)
                  
         # loading image
         self.pixmap = QPixmap('../schematic/tgff_full.png')
-        self.label.setPixmap(self.pixmap)
-        grid.addWidget(self.label, 2, 0)
+        self.schem_label.setPixmap(self.pixmap)
+        grid.addWidget(self.schem_label, 3, 0)
 
         self.setWindowTitle("Wave display")
         self.setLayout(grid)
@@ -86,6 +89,11 @@ class Window(QWidget):
         print("Nodenames: %s" % self.nodeNames)
         self.fileNumber = 0
 
+    def update_line(self, line):
+        delta = self.line_1.value() - self.line_2.value()
+        delta *= 1e12
+        self.measure_label.setText("delta = %d ps" % delta)
+
     # setup the graph widgets - no data yet
     def createGraph(self):
         graphWidget = pg.PlotWidget()
@@ -96,6 +104,11 @@ class Window(QWidget):
 
         graphWidget.setYRange(0, 1.8, padding=0.2)
         graphWidget.showGrid(x = True, y = True, alpha = 0.7) 
+
+        self.line_1 = graphWidget.addLine(x=0, movable=True, pen=pen)
+        self.line_2 = graphWidget.addLine(x=0, movable=True, pen=pen)
+        self.line_1.sigPositionChanged.connect(self.update_line)
+        self.line_2.sigPositionChanged.connect(self.update_line)
         return graphWidget
 
     def updateFile(self, number):
