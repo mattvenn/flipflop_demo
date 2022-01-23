@@ -8,6 +8,9 @@ Inverter Simulation
 Xdbuf      CLK VGND VGND VPWR VPWR CLK_BUF sky130_fd_sc_hd__buf_1
 Xclkbuf    D   VGND VGND VPWR VPWR D_BUF   sky130_fd_sc_hd__buf_1
 
+* buffer output so flop has something to drive
+Xqbuf      Q   VGND VGND VPWR VPWR Q_BUF   sky130_fd_sc_hd__buf_1
+
 * instantiate the flop
 Xflop      CLK_BUF D_BUF VGND VGND VPWR VPWR Q sky130_fd_sc_hd__dfxtp_2
 
@@ -17,7 +20,7 @@ Vdd VPWR VGND 1.8
 
 * create clock & d pulses
 * initial, pulsed, delay, rise, fall, pulse w, period, phase
-Vclk CLK VGND pulse(0 1.8 1.5n 150p 150p 1n   3n )
+Vclk CLK VGND pulse(0 1.8 1.5n 50p 50p 1n   3n )
 * this is the pulse, but it is modified below, so don't set it up here
 Vd D VGND     pulse()
 
@@ -28,9 +31,9 @@ Vd D VGND     pulse()
     let run = 0
 * most interesting part is at 1500, so bracket that
     let delay = 800p
-    dowhile delay < 1800p
+    dowhile delay < 1700p
         echo run "$&run" "$&delay"
-        alter @Vd[pulse]=[ 0 1.8 $&delay 150p 150p 300p 10n ]
+        alter @Vd[pulse]=[ 0 1.8 $&delay 50p 50p 300p 10n ]
 *            tstep tstop tstart
         tran 5e-12 4e-09 0e-00
         wrdata csv/$&run Q D_BUF CLK_BUF Xflop.a_27_47# Xflop.a_193_47# Xflop.a_381_47# Xflop.a_466_413# Xflop.a_634_159#
