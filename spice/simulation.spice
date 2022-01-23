@@ -18,31 +18,22 @@ Vdd VPWR VGND 1.8
 * create clock & d pulses
 * initial, pulsed, delay, rise, fall, pulse w, period, phase
 Vclk CLK VGND pulse(0 1.8 1.5n 150p 150p 1n   3n )
-* this is the pulse, but it is modified below, so need to change that too
-Vd D VGND     pulse(0 1.0 0p   150p 150p 1n   10n)
-
-
+* this is the pulse, but it is modified below, so don't set it up here
+Vd D VGND     pulse()
 
 .control
-    set color0 = white
-    set color1 = black
-    set hcopypscolor = 0
-    set hcopywidth = 800
-    set hcopyheight = 800
-    set xbrushwidth = 2
     set wr_vecnames
     set wr_singlescale
     option numdgt=7
     let run = 0
 * most interesting part is at 1500, so bracket that
-    let delay = 1300p
-    dowhile delay < 1600p
+    let delay = 800p
+    dowhile delay < 1800p
         echo run "$&run" "$&delay"
-        alter @Vd[pulse]=[ 0 1.8 $&delay 150p 150p 1n 10n ]
-        tran 50e-12 4e-09 0e-00
-        if run > 0
-            wrdata csv/$&run Q D_BUF CLK_BUF Xflop.a_27_47# Xflop.a_193_47# Xflop.a_381_47# Xflop.a_466_413# Xflop.a_634_159#
-        end
+        alter @Vd[pulse]=[ 0 1.8 $&delay 150p 150p 300p 10n ]
+*            tstep tstop tstart
+        tran 5e-12 4e-09 0e-00
+        wrdata csv/$&run Q D_BUF CLK_BUF Xflop.a_27_47# Xflop.a_193_47# Xflop.a_381_47# Xflop.a_466_413# Xflop.a_634_159#
         let delay = delay + 0.5p
         let run = run + 1
     end
