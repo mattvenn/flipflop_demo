@@ -35,6 +35,8 @@ This will simulate moving a data pulse through the setup and hold times of a d t
 
 Takes about 8 mins on my laptop.
 
+[Schematic generated with schemdraw](schematic/tg_ff.py) with thanks to Proppy.
+
 ## Fun facts
 
 ![gds](gds.png)
