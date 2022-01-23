@@ -126,7 +126,8 @@ class Window(QWidget):
             else:
                 box = QCheckBox(nodeName)
 
-            box.setChecked(True)
+            if num <= 3:
+                box.setChecked(True)
             box.stateChanged.connect(self.updateGraph)
             box.setStyleSheet("background:rgb(%d,%d,%d);" % (COLOURS[num][0], COLOURS[num][1], COLOURS[num][2]))
             self.showControls[nodeName] = box
