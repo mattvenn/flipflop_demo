@@ -36,53 +36,60 @@
 import schemdraw
 import schemdraw.logic as logic
 import schemdraw.elements as elm
-def latch(left_label='', top_label='', not_label='', pfet_label='', nfet_label='', l_probe_color='', r_probe_color=''):
-  with schemdraw.Drawing(show=False) as d:
-      A = d.add(elm.Dot().label(left_label, 'bottom'))
-      d += elm.Line().length(d.unit*0.5).up()
-      d += elm.Line(arrow='<-').up()
-      d += elm.Line().length(d.unit*0.5).right()
-      D = d.add(elm.Dot())
-      d.move(0, d.unit)
-      d += elm.GroundSignal().flip()
-      pfet = d.add(elm.PFet())
-      d += elm.PFet().label(pfet_label, 'right')
-      d += elm.NFet().at(D.center).label(nfet_label, 'right')
-      nfet = d.add(elm.NFet())
-      d += elm.GroundSignal()
-      d += elm.Line().at(A.center).right(d.unit*1)
-      if l_probe_color:
-        d += elm.Dot(radius=radius).color(l_probe_color)
-      d += logic.Not().label(not_label, 'bottom')
-      if r_probe_color:
-        d += elm.Dot(radius=radius).color(r_probe_color)
-      d += elm.Line().right(d.unit*1.0)
-      B = d.add(elm.Dot() )
-      d += elm.Line().up(d.unit*1.5 )
-      d += elm.Line(arrow='->').length(d.unit*0.5).left()
-      d += elm.Line().length(d.unit*0.5)
-      C = d.add(elm.Dot())
-      d += elm.Wire('-|').at(pfet.gate).label(top_label, 'top').to(C.center)
-      d += elm.Wire('-|').at(nfet.gate).to(C.center)
-      d.here = B.center
-      return elm.ElementDrawing(d)
 
-with schemdraw.Drawing(file="tgff.png") as d:
-    radius = 0.2
-    d += elm.Line().length(d.unit*0.5).label('D', 'left')
-    d += elm.Dot(radius=radius).color('#e81123')
-    d += logic.Not().label('X1', 'bottom')
-    d += elm.Dot(radius=radius).color('#00bcf2')
-    d += elm.PFet2().hold().label('CLK', 'top')
-    d += elm.NFet2().flip().label('!CLK', 'bottom')
-    d += latch(left_label='A', top_label='X3', not_label='X2', pfet_label="!CLK", nfet_label="CLK", l_probe_color='#00b294', r_probe_color='#009e49')
-    d += elm.PFet2().hold().label('!CLK', 'top')
-    d += elm.NFet2().flip().label('CLK', 'bottom')
-    d += latch(top_label='X4', not_label='X5', pfet_label="CLK", nfet_label="!CLK")
-    d += elm.Line().length(d.unit*0.5)
-    d += logic.Not().label('X6', 'bottom')
-    d += elm.Dot(radius=radius).color('#ff8c00')
-    d += elm.Line().length(d.unit*0.5).label('Q', 'right')
+radius = 0.2
+
+def latch(left_label='', top_label='', not_label='', pfet_label='', nfet_label='', l_probe_color='', r_probe_color=''):
+    with schemdraw.Drawing(show=False) as d:
+        A = d.add(elm.Dot().label(left_label, 'bottom'))
+        d += elm.Line().length(d.unit*0.5).up()
+        d += elm.Line(arrow='<-').up()
+        d += elm.Line().length(d.unit*0.5).right()
+        D = d.add(elm.Dot())
+        d.move(0, d.unit)
+        d += elm.GroundSignal().flip()
+        pfet = d.add(elm.PFet())
+        d += elm.PFet().label(pfet_label, 'right')
+        d += elm.NFet().at(D.center).label(nfet_label, 'right')
+        nfet = d.add(elm.NFet())
+        d += elm.GroundSignal()
+        d += elm.Line().at(A.center).right(d.unit*1)
+        if l_probe_color:
+            d += elm.Dot(radius=radius).color(l_probe_color)
+        d += logic.Not().label(not_label, 'bottom')
+        if r_probe_color:
+            d += elm.Dot(radius=radius).color(r_probe_color)
+        d += elm.Line().right(d.unit*1.0)
+        B = d.add(elm.Dot() )
+        d += elm.Line().up(d.unit*1.5 )
+        d += elm.Line(arrow='->').length(d.unit*0.5).left()
+        d += elm.Line().length(d.unit*0.5)
+        C = d.add(elm.Dot())
+        d += elm.Wire('-|').at(pfet.gate).label(top_label, 'top').to(C.center)
+        d += elm.Wire('-|').at(nfet.gate).to(C.center)
+        d.here = B.center
+        return elm.ElementDrawing(d)
+
+def tg_ff():
+    with schemdraw.Drawing(show=False) as d:
+        d += elm.Line().length(d.unit*0.5).label('D', 'left')
+        d += elm.Dot(radius=radius).color('#e81123')
+        d += logic.Not().label('X1', 'bottom')
+        d += elm.Dot(radius=radius).color('#00bcf2')
+        d += elm.PFet2().hold().label('CLK', 'top')
+        d += elm.NFet2().flip().label('!CLK', 'bottom')
+        d += latch(left_label='A', top_label='X3', not_label='X2', pfet_label="!CLK", nfet_label="CLK", l_probe_color='#00b294', r_probe_color='#009e49')
+        d += elm.PFet2().hold().label('!CLK', 'top')
+        d += elm.NFet2().flip().label('CLK', 'bottom')
+        d += latch(top_label='X4', not_label='X5', pfet_label="CLK", nfet_label="!CLK")
+        d += elm.Line().length(d.unit*0.5)
+        d += logic.Not().label('X6', 'bottom')
+        d += elm.Dot(radius=radius).color('#ff8c00')
+        d += elm.Line().length(d.unit*0.5).label('Q', 'right')
+        return elm.ElementDrawing(d)
+        
+with schemdraw.Drawing(file='tgff.png') as d:
+    d += tg_ff()
 # -
 
 # ## clock_low
@@ -134,18 +141,24 @@ with schemdraw.Drawing(file="clock_high.png") as d:
     d += logic.Not('left').label('X3')
     d += elm.Line('down')
 
+
 # ## clock_gen
 
 # + colab={"base_uri": "https://localhost:8080/", "height": 110} id="DrJeVkAohslo" outputId="19d2a6ef-9b31-4cff-a2db-637377c52bda"
+def clock_gen():
+    with schemdraw.Drawing(show=False) as d:
+        d += elm.Line().length(0).label('CLK IN', 'bottom', ofst=0.5)
+        d += elm.Dot(radius=radius).color('#ec008c')
+        d += logic.Not() # .label('1+2', 'top')
+        d += elm.Dot(radius=radius).color('#68217a')
+        d += elm.Line().length(0).label('!CLK', 'bottom', ofst=0.5)
+        d += logic.Not() # .label('3+4', 'top')
+        d += elm.Dot(radius=radius).color('#00188f')
+        d += elm.Line().length(0).label('CLK', 'bottom', ofst=0.5)
+        return elm.ElementDrawing(d)
+
 with schemdraw.Drawing(file='clock_gen.png') as d:
-    d += elm.Line().length(0).label('CLK IN', 'bottom', ofst=0.5)
-    d += elm.Dot(radius=radius).color('#ec008c')
-    d += logic.Not() # .label('1+2', 'top')
-    d += elm.Dot(radius=radius).color('#68217a')
-    d += elm.Line().length(0).label('!CLK', 'bottom', ofst=0.5)
-    d += logic.Not() # .label('3+4', 'top')
-    d += elm.Dot(radius=radius).color('#00188f')
-    d += elm.Line().length(0).label('CLK', 'bottom', ofst=0.5)
+    d += clock_gen()
 # -
 
 # ## latch1
@@ -174,3 +187,10 @@ with schemdraw.Drawing(file='latch3.png') as d:
     d += elm.NFet2().flip().label('CLK', 'bottom')
     d += latch(left_label='A', pfet_label="CLK", nfet_label="!CLK")
     d += elm.Line().right().length(1).label('!Q', "right", ofst=0.5)
+
+# ## tgff_with_clock
+
+with schemdraw.Drawing(file='tgff_with_clock.png') as d:
+    d += tg_ff()
+    d.here = (0, d.unit * 2.5)
+    d += clock_gen()
