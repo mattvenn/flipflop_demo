@@ -1,0 +1,4 @@
+schemdraw[matplotlib]
+jupyterlab
+jupytext
+
