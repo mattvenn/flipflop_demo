@@ -37,9 +37,7 @@ import schemdraw
 import schemdraw.logic as logic
 import schemdraw.elements as elm
 
-radius = 0.2
-
-def latch(left_label='', top_label='', not_label='', pfet_label='', nfet_label='', l_probe_color='', r_probe_color=''):
+def latch(left_label='', top_label='', not_label='', pfet_label='', nfet_label='', l_probe_color='', r_probe_color='', probe_radius=0.2):
     with schemdraw.Drawing(show=False) as d:
         A = d.add(elm.Dot().label(left_label, 'bottom'))
         d += elm.Line().length(d.unit*0.5).up()
@@ -55,10 +53,10 @@ def latch(left_label='', top_label='', not_label='', pfet_label='', nfet_label='
         d += elm.GroundSignal()
         d += elm.Line().at(A.center).right(d.unit*1)
         if l_probe_color:
-            d += elm.Dot(radius=radius).color(l_probe_color)
+            d += elm.Dot(radius=probe_radius).color(l_probe_color)
         d += logic.Not().label(not_label, 'bottom')
         if r_probe_color:
-            d += elm.Dot(radius=radius).color(r_probe_color)
+            d += elm.Dot(radius=probe_radius).color(r_probe_color)
         d += elm.Line().right(d.unit*1.0)
         B = d.add(elm.Dot() )
         d += elm.Line().up(d.unit*1.5 )
@@ -69,27 +67,31 @@ def latch(left_label='', top_label='', not_label='', pfet_label='', nfet_label='
         d += elm.Wire('-|').at(nfet.gate).to(C.center)
         d.here = B.center
         return elm.ElementDrawing(d)
-
-def tg_ff():
+    
+def inv(label='', left_label='', right_label='', l_probe_color='', r_probe_color='', proble_radius=0.2):
     with schemdraw.Drawing(show=False) as d:
         d += elm.Line().length(d.unit*0.5).label('D', 'left')
-        d += elm.Dot(radius=radius).color('#e81123')
-        d += logic.Not().label('X1', 'bottom')
-        d += elm.Dot(radius=radius).color('#00bcf2')
-        d += elm.PFet2().hold().label('CLK', 'top')
-        d += elm.NFet2().flip().label('!CLK', 'bottom')
-        d += latch(left_label='A', top_label='X3', not_label='X2', pfet_label="!CLK", nfet_label="CLK", l_probe_color='#00b294', r_probe_color='#009e49')
-        d += elm.PFet2().hold().label('!CLK', 'top')
-        d += elm.NFet2().flip().label('CLK', 'bottom')
-        d += latch(top_label='X4', not_label='X5', pfet_label="CLK", nfet_label="!CLK")
-        d += elm.Line().length(d.unit*0.5)
-        d += logic.Not().label('X6', 'bottom')
-        d += elm.Dot(radius=radius).color('#ff8c00')
-        d += elm.Line().length(d.unit*0.5).label('Q', 'right')
+        if l_probe_color:
+            d += elm.Dot(radius=proble_radius).color(l_probe_color)
+        d += logic.Not().label(label, 'bottom')
+        if r_probe_color:
+            d += elm.Dot(radius=proble_radius).color(r_probe_color)
         return elm.ElementDrawing(d)
-        
+
+def tg(top_label='', bottom_label=''):
+    with schemdraw.Drawing(show=False) as d:
+        d += elm.PFet2().hold().label(top_label, 'top')
+        d += elm.NFet2().flip().label(bottom_label, 'bottom')
+        return elm.ElementDrawing(d)
+
 with schemdraw.Drawing(file='tgff.png') as d:
-    d += tg_ff()
+    d += inv(label='X1', left_label='D', l_probe_color='#e81123', r_probe_color='#00bcf2')
+    d += tg(top_label='CLK', bottom_label='!CLK')
+    d += latch(left_label='A', top_label='X3', not_label='X2', pfet_label="!CLK", nfet_label="CLK", l_probe_color='#00b294', r_probe_color='#009e49')
+    d += tg(top_label='!CLK', bottom_label='CLK')
+    d += latch(top_label='X4', not_label='X5', pfet_label="CLK", nfet_label="!CLK")
+    d += inv(label='X6', right_label='Q', r_probe_color='#ff8c00')
+
 # -
 
 # ## clock_low
@@ -191,6 +193,11 @@ with schemdraw.Drawing(file='latch3.png') as d:
 # ## tgff_with_clock
 
 with schemdraw.Drawing(file='tgff_with_clock.png') as d:
-    d += tg_ff()
+    d += inv(label='X1', left_label='D', l_probe_color='#e81123', r_probe_color='#00bcf2')
+    d += tg(top_label='CLK', bottom_label='!CLK')
+    d += latch(left_label='A', top_label='X3', not_label='X2', pfet_label="!CLK", nfet_label="CLK", l_probe_color='#00b294', r_probe_color='#009e49')
+    d += tg(top_label='!CLK', bottom_label='CLK')
+    d += latch(top_label='X4', not_label='X5', pfet_label="CLK", nfet_label="!CLK")
+    d += inv(label='X6', right_label='Q', r_probe_color='#ff8c00')
     d.here = (0, d.unit * 2.5)
     d += clock_gen()
