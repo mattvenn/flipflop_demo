@@ -9,7 +9,7 @@ For a video coming soon to https://www.youtube.com/zerotoasic
     git clone https://github.com/mattvenn/flipflop_demo
     cd flipflop_demo/spice
     tar xf csv.tar.bz2
-    ./gui.py
+    ./wave.py
 
 
 You will probably need to install the [requirements](spice/requirements.txt)
