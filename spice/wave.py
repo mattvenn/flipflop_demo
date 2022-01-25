@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import sys
 import csv
+from PyQt5 import uic, QtWidgets
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import QPixmap
@@ -33,31 +34,20 @@ COLOURS = [
 
 PEN_WIDTH = 3
 
-class Window(QWidget):
+class MainWindow(QtWidgets.QMainWindow):
     def __init__(self, parent=None):
-        super(Window, self).__init__(parent)
+        super(self.__class__, self).__init__()
+        uic.loadUi('ui/wave.ui', self)
 
         self.loadData()
-
-        grid = QGridLayout()
-        grid.addWidget(self.createGraph(), 0, 0)
-        grid.addWidget(self.createControls(), 1, 0)
-
+        self.graph_layout.addWidget(self.createGraph())
+        self.addCheckboxes()
         self.updateGraph()
-
-        self.schem_label = QLabel(self)
-        self.measure_label = QLabel(self)
-        self.measure_label.setText("0")
-        grid.addWidget(self.measure_label, 2, 0)
                  
         # loading image
         self.pixmap = QPixmap('../schematic/tgff_with_clock.png')
         self.schem_label.setPixmap(self.pixmap)
-        grid.addWidget(self.schem_label, 3, 0)
-
         self.setWindowTitle("Wave display")
-        self.setLayout(grid)
-        self.resize(1800, 800)
 
     def loadData(self):
         print("loading data", end='')
@@ -130,9 +120,7 @@ class Window(QWidget):
             else:
                 self.graphs[nodeName].clear()
         
-    def createControls(self):
-        groupBox = QGroupBox("Controls")
-        vbox = QVBoxLayout()
+    def addCheckboxes(self):
         self.showControls = {}
         for num, nodeName in enumerate(self.nodeNames):
             if nodeName == 'time':
@@ -148,24 +136,14 @@ class Window(QWidget):
             box.stateChanged.connect(self.updateGraph)
             box.setStyleSheet("background:rgb(%d,%d,%d);" % (COLOURS[num][0], COLOURS[num][1], COLOURS[num][2]))
             self.showControls[nodeName] = box
-            vbox.addWidget(box)
+            self.checkbox_layout.addWidget(box)
        
-        slider = QSlider(Qt.Horizontal)
-        slider.setFocusPolicy(Qt.StrongFocus)
-        slider.setTickPosition(QSlider.TicksBothSides)
-        slider.setTickInterval(10)
-        slider.setMaximum(self.numFiles - 1)
-        slider.setSingleStep(1)
-        slider.valueChanged.connect(self.updateFile)
-        vbox.addWidget(slider)
-
-        vbox.addStretch(1)
-        groupBox.setLayout(vbox)
-
-        return groupBox
+        # slider config
+        self.slider.setMaximum(self.numFiles - 1)
+        self.slider.valueChanged.connect(self.updateFile)
 
 if __name__ == '__main__':
-    app = QApplication(sys.argv)
-    gui = Window()
-    gui.show()
+    app = QtWidgets.QApplication(sys.argv)
+    main = MainWindow()
+    main.show()
     sys.exit(app.exec_())
