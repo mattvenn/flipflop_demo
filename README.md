@@ -41,6 +41,8 @@ Takes about 8 mins on my laptop.
 
 ## Fun facts
 
+The flip flop is one of the largest and most complex [standard cells](https://www.zerotoasiccourse.com/terminology/standardcell/). Here's the [GDS](https://www.zerotoasiccourse.com/terminology/gds2/) layout:
+
 ![gds](gds.png)
 
 * 26 fets, 13 CMOS pairs
