@@ -8,11 +8,11 @@
 Vdd vdd 0 DC 'vp'
 
 * Vfrc forces node 1 to a voltage.  X2 will push/pull on Vfrc to try to move the inverter pair
-* into a stable state.  Node 1 voltages where X2 tries hard are stable. And it gives an idea 
-* what the restoring force looks like at that point.  Voltages where X2 pushes not at all, i.e. 
-* X2 output current is zero, are metastable. 
+* into a stable state.  Node 1 voltages where X2 tries hard are stable. And it gives an idea
+* what the restoring force looks like at that point.  Voltages where X2 pushes not at all, i.e.
+* X2 output current is zero, are metastable.
 
-Vfrc 1 gnd DC 'vp' 
+Vfrc 1 gnd DC 'vp'
 
 X1 1 gnd gnd vdd vdd 2 sky130_fd_sc_hd__inv_4
 X2 2 gnd gnd vdd vdd 1 sky130_fd_sc_hd__inv_4
@@ -26,7 +26,7 @@ set noacct
 options NOINIT NOMOD
 save 2 i(Vfrc)
 run
-plot i(Vfrc) 
+plot i(Vfrc)
 plot v(2)
 write
 *quit
